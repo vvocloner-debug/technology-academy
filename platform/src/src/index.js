@@ -1,46 +1,56 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const Stripe = require("stripe");
 
 const app = express();
 
-// ضع الـ Secret Key الخاص بحسابك (مفتاح STRIPE_SECRET_KEY من Dashboard)
-const stripe = Stripe("sk_test_1234567890"); // ⚠️ عدله بالمفتاح السري بتاعك
+// استخدم المفتاح السري من .env
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
-// ضع الـ Signing Secret اللي أخدته من Stripe Webhooks
-const endpointSecret = "whsec_scnLAOGeVlRsCPK8mCN0zCTpaGKdHX9E";
+// البورت
+const port = process.env.PORT || 3000;
 
-// لازم body يكون خام (raw) علشان نتحقق من التوقيع
-app.post(
-    "/webhook",
-    bodyParser.raw({ type: "application/json" }),
-    (req, res) => {
-        const sig = req.headers["stripe-signature"];
+// Secret بتاع الـ webhook
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-        let event;
+// Middleware عادي
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-        try {
-            event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-            console.log("✅ Event Received:", event.type);
-        } catch (err) {
-            console.error("❌ Error verifying webhook:", err.message);
-            return res.status(400).send(`Webhook Error: ${err.message}`);
-        }
+// Route عادي للتجربة
+app.get("/", (req, res) => {
+  res.send("✅ Stripe Webhook Server Running");
+});
 
-        // هنا تقدر تتعامل مع الأحداث المختلفة
-        switch (event.type) {
-            case "payment_intent.succeeded":
-                console.log("💰 Payment succeeded!");
-                break;
-            case "payment_intent.payment_failed":
-                console.log("❌ Payment failed!");
-                break;
-            default:
-                console.log(`ℹ️ Event type not handled: ${event.type}`);
-        }
+// Webhook endpoint
+app.post("/webhook", bodyParser.raw({ type: "application/json" }), (req, res) => {
+  const sig = req.headers["stripe-signature"];
 
-        res.json({ received: true });
-    }
-);
+  let event;
 
-app.listen(3000, () => console.log("🚀 Webhook server running on port 3000"));
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+  } catch (err) {
+    console.error("❌ Webhook signature verification failed.", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // هنا بتتعامل مع الأحداث
+  switch (event.type) {
+    case "payment_intent.succeeded":
+      console.log("💰 Payment succeeded:", event.data.object.id);
+      break;
+    case "payment_intent.payment_failed":
+      console.log("❌ Payment failed:", event.data.object.id);
+      break;
+    default:
+      console.log(`ℹ️Unhandled event type ${event.type}`);
+  }
+
+  res.json({ received: true });
+});
+
+app.listen(port, () => {
+  console.log(`🚀 Server running on port ${port}`);
+});

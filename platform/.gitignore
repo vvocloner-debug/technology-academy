@@ -1,4 +1,7 @@
 node_modules/
 .env
+*.log
+auto-push.*
+post-commit*
+.vscode/
 .DS_Store
-auto-push.log

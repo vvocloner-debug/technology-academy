@@ -7,10 +7,10 @@ app.use(express.json());
 
 // Test route
 app.get("/", (req, res) => {
-  res.send("🚀 Server is running and ready!");
+    res.send("🚀 Server is running and ready!");
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`✅ Server is running on http://localhost:${PORT}`);
+    console.log(`✅ Server is running on http://localhost:${PORT}`);
 });

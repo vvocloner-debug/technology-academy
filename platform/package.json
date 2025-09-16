@@ -6,6 +6,11 @@
         "start": "node src/index.js",
         "dev": "nodemon src/index.js"
     },
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js"
+    }
+
     "keywords": [],
     "author": "",
     "license": "ISC",

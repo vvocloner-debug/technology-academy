@@ -1,8 +1,7 @@
 @echo off
-cd /d F:\technology-academy
-
-:: Add all changes
-git add -A
-
-:: Try to commit; if nothing to commit, ignore the error
-git commit -m "Auto update" 2>nul || exit 0
+:loop
+git add .
+git commit -m "auto commit"
+git push
+timeout /t 60 >nul
+goto loop

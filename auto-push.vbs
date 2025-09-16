@@ -1,2 +1,3 @@
 Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "cmd /c F:\technology-academy\auto-push.bat", 0, Falseس
+WshShell.Run """F:\technology-academy\auto-push.bat""", 0
+Set WshShell = Nothing

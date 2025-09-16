@@ -44,13 +44,13 @@ app.post(
 );
 
 app.listen(3000, () => console.log("🚀 Webhook server running on port 3000"));
-    default:
-      console.log(`ℹ️Unhandled event type ${event.type}`);
-  }
+default:
+console.log(`ℹ️Unhandled event type ${event.type}`);
+}
 
-  res.json({ received: true });
+res.json({ received: true });
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Server running on port ${port}`);
+    console.log(`🚀 Server running on port ${port}`);
 });

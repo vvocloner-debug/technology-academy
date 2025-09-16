@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Checkout Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; }
+    .btn { padding: 12px 20px; background:#6772e5;color:#fff;border:none;border-radius:6px;cursor:pointer }
+  </style>
+</head>
+<body>
+  <h1>اختبار Stripe Checkout</h1>
+  <p>منتج تجريبي: رسوم 10.00 USD</p>
+  <button id="checkoutBtn" class="btn">ادفع الآن</button>
+
+  <script>
+    async function getPublishableKey() {
+      const res = await fetch('/config');
+      const j = await res.json();
+      return j.publishableKey;
+    }
+
+    document.getElementById('checkoutBtn').addEventListener('click', async () => {
+      // ننادي السيرفر ليعمل جلسة Checkout
+      const resp = await fetch('/create-checkout-session', { method: 'POST' });
+      const data = await resp.json();
+      if (data.url) {
+        // نوجه المتصفح إلى صفحة Checkout المستضافة من Stripe
+        window.location = data.url;
+      } else {
+        alert('Error creating checkout session');
+        console.error(data);
+      }
+    });
+  </script>
+</body>
+</html>

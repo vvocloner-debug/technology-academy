@@ -1,7 +1,20 @@
 @echo off
+cd /d F:\technology-academy
+
 :loop
-git add .
-git commit -m "auto commit"
-git push
-timeout /t 60 >nul
+echo ===============================
+echo [Auto Git Push Running...]
+echo Time: %date% %time%
+echo ===============================
+
+git add -A
+
+set msg=Auto commit at %date% %time%
+git commit -m "%msg%" >nul 2>&1
+
+git push origin main
+
+echo -------------------------------
+echo Waiting 60 seconds...
+timeout /t 60 /nobreak >nul
 goto loop

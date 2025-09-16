@@ -52,36 +52,14 @@
     </script>
 </body>
 
-</html>     // ننادي السيرفر ليعمل جلسة Checkout
-            const resp = await fetch('/create-checkout-session', {
-                method: 'POST'
-            });
-            const data = await resp.json();
-            if (data.url) {
-                // نوجه المتصفح إلى صفحة Checkout المستضافة من Stripe
-                window.location = data.url;
-            } else {
-                alert('Error creating checkout session');
-                console.error(data);
-            }
-        });
-    </script>
+</html> // ننادي السيرفر ليعمل جلسة Checkout const resp = await fetch('/create-checkout-session', { method: 'POST' }); const data = await resp.json(); if (data.url) { // نوجه المتصفح إلى صفحة Checkout المستضافة من Stripe window.location = data.url; } else { alert('Error
+creating checkout session'); console.error(data); } });
+</script>
 </body>
 
-</html>     // ننادي السيرفر ليعمل جلسة Checkout
-            const resp = await fetch('/create-checkout-session', {
-                method: 'POST'
-            });
-            const data = await resp.json();
-            if (data.url) {
-                // نوجه المتصفح إلى صفحة Checkout المستضافة من Stripe
-                window.location = data.url;
-            } else {
-                alert('Error creating checkout session');
-                console.error(data);
-            }
-        });
-    </script>
+</html> // ننادي السيرفر ليعمل جلسة Checkout const resp = await fetch('/create-checkout-session', { method: 'POST' }); const data = await resp.json(); if (data.url) { // نوجه المتصفح إلى صفحة Checkout المستضافة من Stripe window.location = data.url; } else { alert('Error
+creating checkout session'); console.error(data); } });
+</script>
 </body>
 
 </html>

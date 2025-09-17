@@ -5,3 +5,4 @@ auto-push.*
 post-commit*
 .vscode/
 .DS_Store
+platform-uploads/

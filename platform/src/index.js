@@ -1,39 +1,26 @@
-import express from "express";
-import Stripe from "stripe";
-import dotenv from "dotenv";
-
-dotenv.config();
+// src/index.js
+require('dotenv').config();
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const routes = require('./routes/api');
 
 const app = express();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // sk_test_xxx من .env
+const PORT = process.env.PORT || 3000;
 
+// For normal JSON APIs
+app.use(cors());
 app.use(express.json());
 
-// Create Checkout Session
-app.post("/create-checkout-session", async (req, res) => {
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "Course Subscription", // غيرها على حسب منتجك
-            },
-            unit_amount: 2000, // السعر بـ "سنت" (هنا 20.00 USD)
-          },
-          quantity: 1,
-        },
-      ],
-      success_url: "http://localhost:3000/success", // بعد الدفع الناجح
-      cancel_url: "http://localhost:3000/cancel", // لو رجع بدون دفع
-    });
-    res.json({ id: session.id });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Mount routes (other app routes)
+app.use('/api', routes);
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+// Stripe webhook needs raw body; define raw middleware at the exact route in controller
+const stripeController = require('./controllers/stripeController');
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), stripeController.webhookHandler);
+
+app.get('/', (req, res) => res.send('Platform API is up'));
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

@@ -1,16 +1,32 @@
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><title>Technology Academy</title></head>
-<body>
-  <h1>Welcome to Technology Academy</h1>
-  <button id="checkout">Buy Course $50</button>
-  <script>
-    document.getElementById("checkout").addEventListener("click", async () => {
-      const res = await fetch('/api/create-checkout-session', { method: 'POST' });
-      const data = await res.json();
-      if (data.url) window.location = data.url;
-      else alert('Error creating session');
-    });
-  </script>
+
+
+    
+    
+
+
+<head>
+      <meta charset="utf-8">
+      <title>Technology Academy</title>
+ </ head>
+    
+      <body>
+               
+           
+        <h  1>Welcome to Technology Academy</h1>
+        <b  utton id="checkout">Buy Course $50</button>
+       <s   cript>
+            document.getElementById("checkout").addEventListener("click", async() => {
+              const res = await fetch('/api/create-checkout-session', {
+       
+         method: 'POST'
+            });
+            const data = await res.json();
+            if (data.url) window.location = data.url;
+            else alert('Error creating session');
+        });
+    </script>
 </body>
+
 </html>

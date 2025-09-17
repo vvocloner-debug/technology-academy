@@ -1,32 +1,69 @@
 <!doctype html>
 <html>
-
-
-    
-    
-
-
 <head>
-      <meta charset="utf-8">
-      <title>Technology Academy</title>
- </ head>
-    
-      <body>
-               
-           
-        <h  1>Welcome to Technology Academy</h1>
-        <b  utton id="checkout">Buy Course $50</button>
-       <s   cript>
-            document.getElementById("checkout").addEventListener("click", async() => {
-              const res = await fetch('/api/create-checkout-session', {
-       
-         method: 'POST'
-            });
-            const data = await res.json();
-            if (data.url) window.location = data.url;
-            else alert('Error creating session');
-        });
-    </script>
-</body>
+  <meta charset="utf-8">
+  <title>Technology Academy</title>
+  <style>body{font-family:Arial;padding:20px} .card{border:1px solid #ddd;padding:12px;margin:8px}</style>
+</head>
+<body>
+  <h1>Technology Academy — Courses</h1>
 
+  <div id="auth">
+    <input id="email" placeholder="email">
+    <input id="password" type="password" placeholder="password">
+    <button id="btnLogin">Login</button>
+    <button id="btnRegister">Register</button>
+    <div id="userInfo"></div>
+  </div>
+
+  <div id="courses"></div>
+
+  <script>
+    const apiBase = '/api';
+    function getToken(){ return localStorage.getItem('ta_token'); }
+    async function loadCourses(){
+      const res = await fetch(apiBase + '/courses');
+      const list = await res.json();
+      const el = document.getElementById('courses'); el.innerHTML='';
+      list.forEach(c => {
+        const div = document.createElement('div'); div.className='card';
+        div.innerHTML = `<h3>${c.title} — $${(c.price/100).toFixed(2)}</h3><p>${c.description || ''}</p>`;
+        const buy = document.createElement('button'); buy.textContent='Buy';
+        buy.onclick = async () => {
+          const token = getToken();
+          if(!token){ alert('Please login first'); return; }
+          const r = await fetch('/api/payment/create-checkout-session', { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + token }, body: JSON.stringify({ courseId: c.id }) });
+          const j = await r.json();
+          if (j.url) window.location = j.url;
+          else alert('Error: ' + (j.error || ''));
+        };
+        div.appendChild(buy);
+        el.appendChild(div);
+      });
+    }
+    document.getElementById('btnLogin').onclick = async () => {
+      const email = document.getElementById('email').value, password = document.getElementById('password').value;
+      const res = await fetch('/api/auth/login', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ email, password }) });
+      const j = await res.json();
+      if (j.token){ localStorage.setItem('ta_token', j.token); alert('Logged in'); showUser(); }
+      else alert(j.error || 'Login failed');
+    };
+    document.getElementById('btnRegister').onclick = async () => {
+      const name = prompt('Name?')||'';
+      const email = document.getElementById('email').value, password = document.getElementById('password').value;
+      const res = await fetch('/api/auth/register', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ name, email, password }) });
+      const j = await res.json();
+      if (j.token){ localStorage.setItem('ta_token', j.token); alert('Registered'); showUser();}
+      else alert(j.error || 'Register failed');
+    };
+    async function showUser(){
+      const token = getToken();
+      if (!token) return;
+      const res = await fetch('/api/auth/me', { headers:{ Authorization: 'Bearer ' + token }});
+      const j = await res.json();
+      document.getElementById('userInfo').innerText = j.user ? ('Signed in: ' + j.user.email + (j.user.isAdmin ? ' (admin)' : '')) : '';
+    }
+    loadCourses(); showUser();
+  </script>
+</body>
 </html>

@@ -1,5 +1,14 @@
-node_modules/
+# استبعاد ملفات البيئة السرية
 .env
-auto-push.log
-*.log
-.vscode/
+.env.local
+.env.*.local
+
+# استبعاد ملفات النظام
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# استبعاد مخرجات البناء
+dist/
+build/
